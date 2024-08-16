@@ -43,21 +43,23 @@ end
 
 function MythicQuickCreate:checkOwnedKeystone()
 	local activityID, groupID, keystoneLevel  = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
+	if not activityID then return end 
+
 	local f = _G["MythicQuickCreate" .. activityID]
 	if not f then return end
-
-	local children = {MythicQuickCreateContent:GetChildren()}
-	table.foreach(children, function(k,v)
-		v.Glowborder:Hide()
-		v.Text:SetText("")
-	end)
-
+	
 	f.Glowborder:Show()
 	f.Text:SetText(keystoneLevel)
 end
 
 
 function MythicQuickCreate:Show()
+	-- reset frames
+	table.foreach({MythicQuickCreateContent:GetChildren()}, function(k,v)
+		v.Glowborder:Hide()
+		v.Text:SetText("")
+	end)
+
 	self:checkOwnedKeystone()
 	LFGListFrame.EntryCreation.DescriptionLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.NameLabel, "TOPLEFT",  0,-90)
 	LFGListFrame.EntryCreation.Description:SetHeight(13)

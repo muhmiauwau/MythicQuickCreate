@@ -16,7 +16,7 @@
 				<Texture parentKey="Texture" useAtlasSize="false" setAllPoints="true" texelSnappingBias="0.0" snapToPixelGrid="false" ></Texture>
 			</Layer>
 			<Layer>
-				<FontString height="20" inherits="SystemFont_Large" parentKey ="Text" text="ddd" outline="THICK"  setAllPoints="true">
+				<FontString height="20" inherits="SystemFont_Large" parentKey ="Text" text="" outline="THICK" setAllPoints="true">
 					<Anchors>
 						<Anchor point="Center">
 							<Offset x="0" y="0"/>
