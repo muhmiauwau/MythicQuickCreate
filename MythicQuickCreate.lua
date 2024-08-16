@@ -1,13 +1,12 @@
 MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate", "AceEvent-3.0", "AceBucket-3.0");
 local _ = LibStub("Lodash"):Get()
-local mplusObj = {}
 
+local mplusObj = {}
 
 function MythicQuickCreate:OnInitialize()
 	local f = CreateFrame("Frame", "MythicQuickCreateContent", LFGListFrame.EntryCreation)
 	f:SetPoint("TOPLEFT", LFGListFrame.EntryCreation.Name, "BOTTOMLEFT", -5, -10)
 	f:SetPoint("TOPRIGHT", LFGListFrame.EntryCreation.Name, "BOTTOMRIGHT", 0, -10 )
-	f:SetPoint("CENTER",  0, 0 )
 	f:SetHeight(32)
 
 	MythicQuickCreate.DescriptionLabelPoint = table.pack(LFGListFrame.EntryCreation.DescriptionLabel:GetPoint())
@@ -42,7 +41,6 @@ function MythicQuickCreate:OnInitialize()
 end
 
 
-
 function MythicQuickCreate:checkOwnedKeystone()
 	local activityID, groupID, keystoneLevel  = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
 	local f = _G["MythicQuickCreate" .. activityID]
@@ -74,15 +72,12 @@ function MythicQuickCreate:Hide()
 	MythicQuickCreateContent:Hide() 
 end
 
-
-
 function MythicQuickCreate:createDungeonsButtons()
 	local spacer = 4
-	local amount = _.size(dConfig)
+	local amount = 8
 	local width = MythicQuickCreateContent:GetWidth()
-
 	local size = (width - ((amount - 1) * spacer)) / amount
-
+	
 	local mapChallengeModeIDs = C_ChallengeMode.GetMapTable()
 	local dObj = {}
 
@@ -94,11 +89,7 @@ function MythicQuickCreate:createDungeonsButtons()
 		})
 	end)
 
-	table.sort(dObj, function(a, b)
-		return a.name < b.name
-	end)
-
-
+	table.sort(dObj, function(a, b) return a.name < b.name end)
 
 	table.foreach(dObj, function(index, dungeon)
 		local find = _.find(mplusObj, function(entry)
@@ -106,47 +97,36 @@ function MythicQuickCreate:createDungeonsButtons()
 		end)
 
 		if find then
-			
-			local f = CreateFrame("Button", "MythicQuickCreate" .. find.id, MythicQuickCreateContent)
-			f:SetSize(size,size)
 			local x = (index - 1) * (size + spacer)
-			f:SetPoint("TOPLEFT", x, 0)
 
-			f.Texture = f:CreateTexture()
-			f.Texture:SetAllPoints()
+			local f = CreateFrame("Button", "MythicQuickCreate" .. find.id, MythicQuickCreateContent , "MythicQuickCreateButton")
+			f:SetSize(size,size)
+			f:SetPoint("TOPLEFT", x ,0)
 			f.Texture:SetTexture(dungeon.texture)
-
-			f.Glowborder = f:CreateTexture()
-			f.Glowborder:SetAllPoints()
-			f.Glowborder:SetAtlas("UI-HUD-ActionBar-PetAutoCast-Corners", true)
-			f.Glowborder:Hide()
-
-	
-			f.Text = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-			f.Text:SetPoint("CENTER")
 			f.Text:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
-			f.Text:SetText("")
 
-
-			local find = _.find(mplusObj, function(entry)
-				return entry.name:sub(1, #dungeon.name) == dungeon.name
-			end)
-
-			f:SetScript("OnEnter", function(self) 
-				GameTooltip:SetOwner(MythicQuickCreateContent, "ANCHOR_BOTTOM");
-				GameTooltip:ClearLines();
-				GameTooltip:SetText(find.name, 1, 1, 1, 1, 1)
-				GameTooltip:Show() 
-			end)
-									
-			f:SetScript("OnLeave", function(self) 
-				GameTooltip:Hide() 
-			end)
-
-			f:SetScript("OnClick", function (self, button, down)
-				LFGListFrame.EntryCreation.selectedActivity = find.id
-				LFGListEntryCreation_ListGroup(LFGListFrame.EntryCreation);
-			end);
+			f.name = find.name
+			f.id = find.id
 		end
 	end)
+end
+
+
+
+MythicQuickCreateButtonMixin = {}
+
+function MythicQuickCreateButtonMixin:OnClick(buttonName, down)
+	LFGListFrame.EntryCreation.selectedActivity = self.id
+	LFGListEntryCreation_ListGroup(LFGListFrame.EntryCreation);
+end
+
+function MythicQuickCreateButtonMixin:OnEnter()
+	GameTooltip:SetOwner(MythicQuickCreateContent, "ANCHOR_BOTTOM");
+	GameTooltip:ClearLines();
+	GameTooltip:SetText(self.name, 1, 1, 1, 1, 1)
+	GameTooltip:Show() 
+end
+
+function MythicQuickCreateButtonMixin:OnLeave()
+	GameTooltip:Hide() 
 end

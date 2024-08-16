@@ -148,7 +148,9 @@
         "CharacterFrame",
         "ID",
         "LFGListEntryCreation_ListGroup",
-        "PlayerFrame"
+        "PlayerFrame",
+        "AdventureMap_FogPinMixin",
+        "AM_PIN_ALPHA_STYLE_VISIBLE_WHEN_ZOOMED_IN"
     ],
     "Lua.diagnostics.disable": [
         "undefined-field",

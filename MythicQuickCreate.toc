@@ -8,4 +8,6 @@
 
 Libs\Lodash\Lodash.lua
 
+
+frames.xml
 MythicQuickCreate.lua

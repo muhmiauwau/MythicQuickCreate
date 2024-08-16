@@ -1,0 +1,42 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+
+	
+
+
+
+	
+	<Button name="MythicQuickCreateButton" virtual="true" mixin="MythicQuickCreateButtonMixin" >
+		<Size x="32" y="32"/>
+		<Anchors>
+			<Anchor point="TOPLEFT" x="0" y="0"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Texture" useAtlasSize="false" setAllPoints="true" texelSnappingBias="0.0" snapToPixelGrid="false" ></Texture>
+			</Layer>
+			<Layer>
+				<FontString height="20" inherits="SystemFont_Large" parentKey ="Text" text="ddd" outline="THICK"  setAllPoints="true">
+					<Anchors>
+						<Anchor point="Center">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<Texture parentKey="Glowborder" atlas="UI-HUD-ActionBar-PetAutoCast-Corners" useAtlasSize="false" setAllPoints="true" texelSnappingBias="0.0" snapToPixelGrid="false" />
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick method="OnClick"/>
+			<OnEnter method="OnEnter"/>
+			<OnLeave method="OnLeave"/>
+		</Scripts>
+	</Button>
+
+
+
+
+
+</Ui>
