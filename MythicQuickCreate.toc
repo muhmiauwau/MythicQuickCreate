@@ -1,0 +1,11 @@
+﻿## Interface: 110002
+## Title: Mythic Quick Create
+## Notes: Adds buttons for quick M+ group creation
+## Version: @project-version@
+## Author: Muhmiauwau
+## X-Curse-Project-ID: 1085161
+
+
+Libs\Lodash\Lodash.lua
+
+MythicQuickCreate.lua

@@ -1,0 +1,8 @@
+package-as: MythicQuickCreate
+
+ignore:
+  - README.md
+
+
+externals:
+  Libs/Lodash: https://github.com/muhmiauwau/Lodash.git
