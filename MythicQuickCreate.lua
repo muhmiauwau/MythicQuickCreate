@@ -4,6 +4,10 @@ local _ = LibStub("Lodash"):Get()
 local mplusObj = {}
 
 function MythicQuickCreate:OnInitialize()
+
+
+
+
 	local f = CreateFrame("Frame", "MythicQuickCreateContent", LFGListFrame.EntryCreation)
 	f:SetPoint("TOPLEFT", LFGListFrame.EntryCreation.Name, "BOTTOMLEFT", -5, -10)
 	f:SetPoint("TOPRIGHT", LFGListFrame.EntryCreation.Name, "BOTTOMRIGHT", 0, -10 )
@@ -21,7 +25,7 @@ function MythicQuickCreate:OnInitialize()
 
 		local baseFilters = panel:GetParent().baseFilters;
 		if baseFilters == 4 and panel.selectedCategory == 2 and panel.selectedFilters == 0 then 
-			MythicQuickCreate:Show()
+			MythicQuickCreate:Show(panel)
 		else 
 			MythicQuickCreate:Hide()
 		end
@@ -43,24 +47,38 @@ end
 
 function MythicQuickCreate:checkOwnedKeystone()
 	local activityID, groupID, keystoneLevel  = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
-	if not activityID then return end 
+	if not activityID then return nil end 
 
 	local f = _G["MythicQuickCreate" .. activityID]
 	if not f then return end
 	
 	f.Glowborder:Show()
 	f.Text:SetText(keystoneLevel)
+
+	return activityID
 end
 
 
-function MythicQuickCreate:Show()
+function MythicQuickCreate:Show(panel)
+	
 	-- reset frames
 	table.foreach({MythicQuickCreateContent:GetChildren()}, function(k,v)
 		v.Glowborder:Hide()
 		v.Text:SetText("")
 	end)
 
-	self:checkOwnedKeystone()
+
+	local keystoneId = MythicQuickCreate:checkOwnedKeystone()
+
+	if MythicQuickCreate.id then 
+		keystoneId = MythicQuickCreate.id
+	end
+
+	
+	if keystoneId then 
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, panel.selectedFilters, panel.selectedCategory, nil, keystoneId)
+	end
+
 	LFGListFrame.EntryCreation.DescriptionLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.NameLabel, "TOPLEFT",  0,-90)
 	LFGListFrame.EntryCreation.Description:SetHeight(13)
 	LFGListFrame.EntryCreation.PlayStyleLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.DescriptionLabel, "TOPLEFT", 0,-55)
@@ -116,10 +134,19 @@ end
 
 
 MythicQuickCreateButtonMixin = {}
-
 function MythicQuickCreateButtonMixin:OnClick(buttonName, down)
-	LFGListFrame.EntryCreation.selectedActivity = self.id
-	LFGListEntryCreation_ListGroup(LFGListFrame.EntryCreation);
+
+	if LFGListFrame.EntryCreation.Name:GetText():match( "^%s*(.-)%s*$" ) == "" then
+		UIErrorsFrame:AddMessage("Name missing", RED_FONT_COLOR:GetRGBA());
+		LFGListFrame.EntryCreation.Name:SetFocus()
+	else
+		LFGListFrame.EntryCreation.selectedActivity = self.id
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, nil, nil, nil, self.id)
+		MythicQuickCreate.id = self.id
+		LFGListEntryCreation_ListGroup(LFGListFrame.EntryCreation);
+	end
+
+	
 end
 
 function MythicQuickCreateButtonMixin:OnEnter()
@@ -131,4 +158,9 @@ end
 
 function MythicQuickCreateButtonMixin:OnLeave()
 	GameTooltip:Hide() 
+end
+
+
+function LFGListEntryCreation_SetTitleFromActivityInfo(self)
+	-- keep this here to avoid error :(
 end

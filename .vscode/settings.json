@@ -150,7 +150,22 @@
         "LFGListEntryCreation_ListGroup",
         "PlayerFrame",
         "AdventureMap_FogPinMixin",
-        "AM_PIN_ALPHA_STYLE_VISIBLE_WHEN_ZOOMED_IN"
+        "AM_PIN_ALPHA_STYLE_VISIBLE_WHEN_ZOOMED_IN",
+        "MenuUtil",
+        "LFGListEntryCreation_Select",
+        "LFGListEntryCreation_SetPlaystyleLabelTextFromActivityInfo",
+        "LFGListEntryCreation_UpdateValidState",
+        "LFGListUtil_AugmentWithBest",
+        "LFGListEntryCreation_OnPlayStyleSelected",
+        "LFGListRequirement_Validate",
+        "LFG_LIST_CROSS_FACTION",
+        "LFG_LIST_CROSS_FACTION_TOOLTIP",
+        "LFG_LIST_CROSS_FACTION_DISABLE_TOOLTIP",
+        "LFG_LIST_RECOMMENDED_ILVL",
+        "LFG_LIST_ITEM_LEVEL_INSTR_SHORT",
+        "message",
+        "UIErrorsFrame",
+        "ERR_SPELL_ALREADY_KNOWN_S"
     ],
     "Lua.diagnostics.disable": [
         "undefined-field",
