@@ -1,4 +1,4 @@
-MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate", "AceEvent-3.0", "AceBucket-3.0");
+MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate");
 local _ = LibStub("Lodash"):Get()
 
 local mplusObj = {}
