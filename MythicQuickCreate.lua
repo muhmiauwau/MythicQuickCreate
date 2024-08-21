@@ -57,12 +57,15 @@ end
 
 
 function MythicQuickCreate:Show(panel)
-
-
-
-	
+	local children = MythicQuickCreateContent:GetChildren()
+	-- return if no dungeon there (on ptr most likely)
+	if not children then 
+		print("Mythic Quick Create: no dungeon configurated on the server")
+		MythicQuickCreate:Hide();
+		return 
+	 end
 	-- reset frames
-	table.foreach({MythicQuickCreateContent:GetChildren()}, function(k,v)
+	table.foreach({children}, function(k,v)
 		v.Glowborder:Hide()
 		v.Text:SetText("")
 	end)
