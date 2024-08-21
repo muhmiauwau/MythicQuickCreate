@@ -4,10 +4,7 @@ local _ = LibStub("Lodash"):Get()
 local mplusObj = {}
 
 function MythicQuickCreate:OnInitialize()
-
-
-
-
+	
 	local f = CreateFrame("Frame", "MythicQuickCreateContent", LFGListFrame.EntryCreation)
 	f:SetPoint("TOPLEFT", LFGListFrame.EntryCreation.Name, "BOTTOMLEFT", -5, -10)
 	f:SetPoint("TOPRIGHT", LFGListFrame.EntryCreation.Name, "BOTTOMRIGHT", 0, -10 )
@@ -60,6 +57,9 @@ end
 
 
 function MythicQuickCreate:Show(panel)
+
+
+
 	
 	-- reset frames
 	table.foreach({MythicQuickCreateContent:GetChildren()}, function(k,v)
@@ -67,14 +67,11 @@ function MythicQuickCreate:Show(panel)
 		v.Text:SetText("")
 	end)
 
-
 	local keystoneId = MythicQuickCreate:checkOwnedKeystone()
-
 	if MythicQuickCreate.id then 
 		keystoneId = MythicQuickCreate.id
 	end
 
-	
 	if keystoneId then 
 		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, panel.selectedFilters, panel.selectedCategory, nil, keystoneId)
 	end

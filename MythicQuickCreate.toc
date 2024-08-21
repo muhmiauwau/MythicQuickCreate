@@ -8,7 +8,7 @@
 
 Libs\LibStub\LibStub.lua
 Libs\AceAddon-3.0\AceAddon-3.0.xml
-Libs\Lodash\Lodash.lua
+Libs\LibLodash\LibLodash.lua
 
 
 frames.xml
