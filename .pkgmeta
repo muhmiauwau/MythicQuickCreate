@@ -11,4 +11,4 @@ externals:
 enable-nolib-creation: no
 
 tools-used:
-    - LibLodash
+    - liblodash
