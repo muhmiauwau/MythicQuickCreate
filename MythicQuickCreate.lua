@@ -2,9 +2,20 @@ MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate");
 local _ = LibStub("LibLodash-1"):Get()
 
 local mplusObj = {}
+local firstCall = true
 
 function MythicQuickCreate:OnInitialize()
-	
+
+	table.foreach(C_LFGList.GetAvailableActivities(2), function(k, id)
+		local info = C_LFGList.GetActivityInfoTable(id)
+		if info.isMythicPlusActivity then
+			tinsert(mplusObj, {
+				id = id,
+				name = info.fullName
+			})
+		end
+	end)
+
 	local f = CreateFrame("Frame", "MythicQuickCreateContent", LFGListFrame.EntryCreation)
 	f:SetPoint("TOPLEFT", LFGListFrame.EntryCreation.Name, "BOTTOMLEFT", -5, -10)
 	f:SetPoint("TOPRIGHT", LFGListFrame.EntryCreation.Name, "BOTTOMRIGHT", 0, -10 )
@@ -15,6 +26,13 @@ function MythicQuickCreate:OnInitialize()
 	MythicQuickCreate.PlayStyleLabelPoint = table.pack(LFGListFrame.EntryCreation.PlayStyleLabel:GetPoint())
 
 	LFGListFrame.CategorySelection.StartGroupButton:HookScript("OnClick", function(self) 
+		if #mplusObj == 0 and firstCall then
+			firstCall = false
+			MythicQuickCreate:Hide()
+			print("Mythic Quick Create: no dungeon configurated on the server")
+			return 
+		end
+
 		local panel = self:GetParent();
 		if ( not panel.selectedCategory ) then
 			return;
@@ -28,15 +46,6 @@ function MythicQuickCreate:OnInitialize()
 		end
     end)
 
-	table.foreach(C_LFGList.GetAvailableActivities(2), function(k, id)
-		local info = C_LFGList.GetActivityInfoTable(id)
-		if info.isMythicPlusActivity then
-			tinsert(mplusObj, {
-				id = id,
-				name = info.fullName
-			})
-		end
-	end)
 
 	MythicQuickCreate:createDungeonsButtons()
 end
@@ -58,9 +67,7 @@ end
 
 function MythicQuickCreate:Show(panel)
 	local children = MythicQuickCreateContent:GetChildren()
-	-- return if no dungeon there (on ptr most likely)
-	if not children then 
-		print("Mythic Quick Create: no dungeon configurated on the server")
+	if not children then
 		MythicQuickCreate:Hide();
 		return 
 	 end
