@@ -1,10 +1,11 @@
 ﻿## Interface: 110002
 ## Title: Mythic Quick Create
-## Notes: Adds buttons for quick M+ group creation
+## Notes: Add buttons for quick M+ group creation
 ## Version: @project-version@
 ## Author: Muhmiauwau
 ## X-Curse-Project-ID: 1085161
-
+## X-Wago-ID: 96don7NO
+## X-WoWI-ID: 26836
 
 Libs\LibStub\LibStub.lua
 Libs\AceAddon-3.0\AceAddon-3.0.xml
