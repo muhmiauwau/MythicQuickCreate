@@ -4,17 +4,32 @@ local _ = LibStub("LibLodash-1"):Get()
 local mplusObj = {}
 local firstCall = true
 
+local mapMap = {}
+mapMap[1284] = 503
+mapMap[1287] = 501
+mapMap[659] = 353
+mapMap[1284] = 505
+mapMap[713] = 376
+mapMap[1290] = 507
+mapMap[703] = 375
+mapMap[1288] = 502
+
 function MythicQuickCreate:OnInitialize()
 
 	table.foreach(C_LFGList.GetAvailableActivities(2), function(k, id)
 		local info = C_LFGList.GetActivityInfoTable(id)
-		if info.isMythicPlusActivity then
-			tinsert(mplusObj, {
-				id = id,
-				name = info.fullName
-			})
-		end
+		if not info.isMythicPlusActivity then return end
+		local mapID =  mapMap[id] or 503
+		local texture= select(4, C_ChallengeMode.GetMapUIInfo(mapID)) 
+		tinsert(mplusObj, {
+			id = id,
+			name = info.fullName,
+			info = info,
+			texture = texture
+		})
 	end)
+
+	table.sort(mplusObj, function(a, b) return a.name < b.name end)
 
 	local f = CreateFrame("Frame", "MythicQuickCreateContent", LFGListFrame.EntryCreation)
 	f:SetPoint("TOPLEFT", LFGListFrame.EntryCreation.Name, "BOTTOMLEFT", -5, -10)
@@ -105,36 +120,17 @@ function MythicQuickCreate:createDungeonsButtons()
 	local width = MythicQuickCreateContent:GetWidth()
 	local size = (width - ((amount - 1) * spacer)) / amount
 	
-	local mapChallengeModeIDs = C_ChallengeMode.GetMapTable()
-	local dObj = {}
+	table.foreach(mplusObj, function(index, dungeon)
+		local x = (index - 1) * (size + spacer)
+		local f = CreateFrame("Button", "MythicQuickCreate" .. dungeon.id, MythicQuickCreateContent , "MythicQuickCreateButton")
+		f:SetSize(size,size)
+		f:SetPoint("TOPLEFT", x ,0)
+		f.Texture:SetTexture(dungeon.texture)
+		f.Text:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 
-	table.foreach(mapChallengeModeIDs, function(index, mapID)
-		local mapInfo = table.pack(C_ChallengeMode.GetMapUIInfo(mapID))
-		tinsert(dObj, {
-			name =  mapInfo[1],
-			texture = mapInfo[4]
-		})
-	end)
-
-	table.sort(dObj, function(a, b) return a.name < b.name end)
-
-	table.foreach(dObj, function(index, dungeon)
-		local find = _.find(mplusObj, function(entry)
-			return entry.name:sub(1, #dungeon.name) == dungeon.name
-		end)
-
-		if find then
-			local x = (index - 1) * (size + spacer)
-
-			local f = CreateFrame("Button", "MythicQuickCreate" .. find.id, MythicQuickCreateContent , "MythicQuickCreateButton")
-			f:SetSize(size,size)
-			f:SetPoint("TOPLEFT", x ,0)
-			f.Texture:SetTexture(dungeon.texture)
-			f.Text:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
-
-			f.name = find.name
-			f.id = find.id
-		end
+		f.name = dungeon.name
+		f.id = dungeon.id
+		f:Show()
 	end)
 end
 
@@ -171,3 +167,20 @@ end
 function LFGListEntryCreation_SetTitleFromActivityInfo(self)
 	-- keep this here to avoid error :(
 end
+
+
+
+--@do-not-package@
+-- local dObj = {}
+
+-- table.foreach(mapChallengeModeIDs, function(index, mapID)
+-- 	local mapInfo = table.pack(C_ChallengeMode.GetMapUIInfo(mapID))
+-- 	tinsert(dObj, {
+-- 		id =  mapInfo[2],
+-- 		name = mapInfo[1],
+-- 		mapInfo = mapInfo
+-- 	})
+-- end)
+
+-- DevTool:AddData(dObj, "dObj")
+--@end-do-not-package@
