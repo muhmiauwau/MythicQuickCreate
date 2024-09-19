@@ -2,7 +2,6 @@ MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate");
 local _ = LibStub("LibLodash-1"):Get()
 
 local mplusObj = {}
-local firstCall = true
 
 local mapMap = {}
 mapMap[1284] = 503
@@ -14,13 +13,36 @@ mapMap[1290] = 507
 mapMap[703] = 375
 mapMap[1288] = 502
 
-function MythicQuickCreate:OnInitialize()
 
+local initialized = false
+
+LFGListFrame.CategorySelection.StartGroupButton:HookScript("OnClick", function(self)
+	if not initialized then
+		MythicQuickCreate:Init()
+		initialized = true
+	end
+
+	local panel = self:GetParent();
+	if ( not panel.selectedCategory ) then
+		return;
+	end
+
+	local baseFilters = panel:GetParent().baseFilters;
+	if baseFilters == 4 and panel.selectedCategory == 2 and panel.selectedFilters == 0 then
+		MythicQuickCreate:Show(panel)
+	else
+		MythicQuickCreate:Hide()
+	end
+end)
+
+
+
+function MythicQuickCreate:Init()
 	table.foreach(C_LFGList.GetAvailableActivities(2), function(k, id)
 		local info = C_LFGList.GetActivityInfoTable(id)
 		if not info.isMythicPlusActivity then return end
 		local mapID =  mapMap[id] or 503
-		local texture= select(4, C_ChallengeMode.GetMapUIInfo(mapID)) 
+		local texture = select(4, C_ChallengeMode.GetMapUIInfo(mapID)) 
 		tinsert(mplusObj, {
 			id = id,
 			name = info.fullName,
@@ -40,30 +62,11 @@ function MythicQuickCreate:OnInitialize()
 	MythicQuickCreate.DescriptionHeight = LFGListFrame.EntryCreation.Description:GetHeight()
 	MythicQuickCreate.PlayStyleLabelPoint = table.pack(LFGListFrame.EntryCreation.PlayStyleLabel:GetPoint())
 
-	LFGListFrame.CategorySelection.StartGroupButton:HookScript("OnClick", function(self) 
-		if #mplusObj == 0 and firstCall then
-			firstCall = false
-			MythicQuickCreate:Hide()
-			print("Mythic Quick Create: no dungeon configurated on the server")
-			return 
-		end
-
-		local panel = self:GetParent();
-		if ( not panel.selectedCategory ) then
-			return;
-		end
-
-		local baseFilters = panel:GetParent().baseFilters;
-		if baseFilters == 4 and panel.selectedCategory == 2 and panel.selectedFilters == 0 then 
-			MythicQuickCreate:Show(panel)
-		else 
-			MythicQuickCreate:Hide()
-		end
-    end)
-
+	
 
 	MythicQuickCreate:createDungeonsButtons()
 end
+
 
 
 function MythicQuickCreate:checkOwnedKeystone()
@@ -104,6 +107,7 @@ function MythicQuickCreate:Show(panel)
 	LFGListFrame.EntryCreation.DescriptionLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.NameLabel, "TOPLEFT",  0,-90)
 	LFGListFrame.EntryCreation.Description:SetHeight(13)
 	LFGListFrame.EntryCreation.PlayStyleLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.DescriptionLabel, "TOPLEFT", 0,-55)
+
 	MythicQuickCreateContent:Show() 
 end
 
