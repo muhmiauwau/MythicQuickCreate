@@ -1,4 +1,4 @@
-﻿## Interface: 110002
+﻿## Interface: 110005
 ## Title: Mythic Quick Create
 ## Notes: Add buttons for quick M+ group creation
 ## Version: @project-version@
