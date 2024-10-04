@@ -29,6 +29,7 @@
 			</Layer>
 		</Layers>
 		<Scripts>
+			<OnShow method="OnShow"/>
 			<OnClick method="OnClick"/>
 			<OnEnter method="OnEnter"/>
 			<OnLeave method="OnLeave"/>

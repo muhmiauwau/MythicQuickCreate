@@ -165,7 +165,8 @@
         "LFG_LIST_ITEM_LEVEL_INSTR_SHORT",
         "message",
         "UIErrorsFrame",
-        "ERR_SPELL_ALREADY_KNOWN_S"
+        "ERR_SPELL_ALREADY_KNOWN_S",
+        "MythicQuickCreateContent"
     ],
     "Lua.diagnostics.disable": [
         "undefined-field",

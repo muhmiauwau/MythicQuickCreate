@@ -1,18 +1,22 @@
-MythicQuickCreate = LibStub("AceAddon-3.0"):NewAddon("MythicQuickCreate");
-local _ = LibStub("LibLodash-1"):Get()
+local _, MythicQuickCreate = ...
 
 local mplusObj = {}
 
 local mapMap = {}
 mapMap[1284] = 503
 mapMap[1287] = 501
-mapMap[659] = 353
-mapMap[1284] = 505
+mapMap[1285] = 505
 mapMap[713] = 376
 mapMap[1290] = 507
 mapMap[703] = 375
 mapMap[1288] = 502
 
+local englishFaction = UnitFactionGroup("player")
+if englishFaction == "Alliance" then
+	mapMap[534] = 353
+else
+	mapMap[659] = 353
+end
 
 local initialized = false
 
@@ -38,18 +42,16 @@ end)
 
 
 function MythicQuickCreate:Init()
-	table.foreach(C_LFGList.GetAvailableActivities(2), function(k, id)
-		local info = C_LFGList.GetActivityInfoTable(id)
-		if not info.isMythicPlusActivity then return end
-		local mapID =  mapMap[id] or 503
-		local texture = select(4, C_ChallengeMode.GetMapUIInfo(mapID)) 
+	for key, id in pairs(mapMap) do
+		local info = C_LFGList.GetActivityInfoTable(key)
+		local texture = select(4, C_ChallengeMode.GetMapUIInfo(id))
 		tinsert(mplusObj, {
-			id = id,
+			id = key,
 			name = info.fullName,
 			info = info,
 			texture = texture
 		})
-	end)
+	end
 
 	table.sort(mplusObj, function(a, b) return a.name < b.name end)
 
@@ -58,30 +60,11 @@ function MythicQuickCreate:Init()
 	f:SetPoint("TOPRIGHT", LFGListFrame.EntryCreation.Name, "BOTTOMRIGHT", 0, -10 )
 	f:SetHeight(32)
 
-	MythicQuickCreate.DescriptionLabelPoint = table.pack(LFGListFrame.EntryCreation.DescriptionLabel:GetPoint())
+	MythicQuickCreate.DescriptionLabelPoint = { LFGListFrame.EntryCreation.DescriptionLabel:GetPoint() }
 	MythicQuickCreate.DescriptionHeight = LFGListFrame.EntryCreation.Description:GetHeight()
-	MythicQuickCreate.PlayStyleLabelPoint = table.pack(LFGListFrame.EntryCreation.PlayStyleLabel:GetPoint())
-
-	
-
+	MythicQuickCreate.PlayStyleLabelPoint = { LFGListFrame.EntryCreation.PlayStyleLabel:GetPoint() }
 	MythicQuickCreate:createDungeonsButtons()
 end
-
-
-
-function MythicQuickCreate:checkOwnedKeystone()
-	local activityID, groupID, keystoneLevel  = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
-	if not activityID then return nil end 
-
-	local f = _G["MythicQuickCreate" .. activityID]
-	if not f then return end
-	
-	f.Glowborder:Show()
-	f.Text:SetText(keystoneLevel)
-
-	return activityID
-end
-
 
 function MythicQuickCreate:Show(panel)
 	local children = MythicQuickCreateContent:GetChildren()
@@ -95,13 +78,9 @@ function MythicQuickCreate:Show(panel)
 		v.Text:SetText("")
 	end)
 
-	local keystoneId = MythicQuickCreate:checkOwnedKeystone()
-	if MythicQuickCreate.id then 
-		keystoneId = MythicQuickCreate.id
-	end
-
-	if keystoneId then 
-		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, panel.selectedFilters, panel.selectedCategory, nil, keystoneId)
+	local activityID = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
+	if activityID then 
+		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, panel.selectedFilters, panel.selectedCategory, nil, activityID)
 	end
 
 	LFGListFrame.EntryCreation.DescriptionLabel:SetPoint("TOPLEFT",LFGListFrame.EntryCreation.NameLabel, "TOPLEFT",  0,-90)
@@ -123,26 +102,42 @@ function MythicQuickCreate:createDungeonsButtons()
 	local amount = 8
 	local width = MythicQuickCreateContent:GetWidth()
 	local size = (width - ((amount - 1) * spacer)) / amount
-	
-	table.foreach(mplusObj, function(index, dungeon)
+
+	for index, dungeon in pairs(mplusObj) do
 		local x = (index - 1) * (size + spacer)
 		local f = CreateFrame("Button", "MythicQuickCreate" .. dungeon.id, MythicQuickCreateContent , "MythicQuickCreateButton")
 		f:SetSize(size,size)
 		f:SetPoint("TOPLEFT", x ,0)
 		f.Texture:SetTexture(dungeon.texture)
 		f.Text:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
+		f:Show()
 
 		f.name = dungeon.name
 		f.id = dungeon.id
-		f:Show()
-	end)
+		f:CheckKeystone()
+	end
 end
 
 
-
 MythicQuickCreateButtonMixin = {}
-function MythicQuickCreateButtonMixin:OnClick(buttonName, down)
 
+function MythicQuickCreateButtonMixin:OnShow()
+	self:CheckKeystone()
+end
+
+function MythicQuickCreateButtonMixin:CheckKeystone()
+	if not self.id then return end
+
+	local activityID, _, keystoneLevel  = C_LFGList.GetOwnedKeystoneActivityAndGroupAndLevel()
+	if not activityID then return nil end 
+	
+	local check = activityID == self.id
+	self.Text:SetText(keystoneLevel)
+	self.Glowborder:SetShown(check)
+	self.Text:SetShown(check)
+end
+
+function MythicQuickCreateButtonMixin:OnClick(buttonName, down)
 	if LFGListFrame.EntryCreation.Name:GetText():match( "^%s*(.-)%s*$" ) == "" then
 		UIErrorsFrame:AddMessage("Name missing", RED_FONT_COLOR:GetRGBA());
 		LFGListFrame.EntryCreation.Name:SetFocus()
@@ -152,8 +147,6 @@ function MythicQuickCreateButtonMixin:OnClick(buttonName, down)
 		MythicQuickCreate.id = self.id
 		LFGListEntryCreation_ListGroup(LFGListFrame.EntryCreation);
 	end
-
-	
 end
 
 function MythicQuickCreateButtonMixin:OnEnter()
@@ -176,7 +169,7 @@ end
 
 --@do-not-package@
 -- local dObj = {}
-
+-- local mapChallengeModeIDs = C_ChallengeMode.GetMapTable()
 -- table.foreach(mapChallengeModeIDs, function(index, mapID)
 -- 	local mapInfo = table.pack(C_ChallengeMode.GetMapUIInfo(mapID))
 -- 	tinsert(dObj, {
